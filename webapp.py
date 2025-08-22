@@ -152,7 +152,8 @@ if 'df' in st.session_state:
             df["Week_end"] = df["Gereed week"].astype(int)
             df['Weeks'] = df.apply(lambda row: list(range(row['Week'], row['Week_end'] + 1)), axis=1) # To do: Implement this in create_heatmap_df
             # If there are values >= "start_year+1"+"start_week", then print a warning and remove those values
-            week_threshold = str(start_year + 1) + str(start_week)
+            week_threshold = int(str(start_year + 1) + str(start_week))
+            st.write(week_threshold)
             df_to_remove = df[df["Week"] >= week_threshold]
             if not df_to_remove.empty:
                 st.warning(f"Er zijn taken gepland na week {start_week} van {start_year + 1}. Deze worden niet meegenomen in de planning.")
