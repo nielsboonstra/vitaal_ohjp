@@ -29,8 +29,6 @@ def normalize_frequency(row : pd.Series) -> pd.Series:
     elif row["Frequentie"] == "JR":
         row["Frequentie aantal"] = row["Frequentie aantal"] * 12
         row["Frequentie"] = "MD"
-    else:
-        st.warning(f"Frequentie '{row['Frequentie']}' is niet genormaliseerd. Alleen 'WK' en 'JR' worden genormaliseerd naar 'MD'.")
     return row
 
 def extract_object(traject_complex_list : list, omschrijving_list : list) -> list:
@@ -134,7 +132,7 @@ if 'df' in st.session_state:
     st.markdown("**Start de conversie naar OHJP:**")
     # Ask user for start year and start week for the planning
     start_year = st.number_input("Kies het startjaar voor de planning:", min_value=2025, max_value=2100)
-    start_week = st.number_input("Kies de startweek voor de planning:", min_value=1, max_value=52, value=36)
+    start_week = st.number_input("Kies de startweek voor de planning:", min_value=1, max_value=52, value=27)
     naam_export = st.text_input("Kies de naam voor het exportbestand (zonder extensie):", value="OHJP [X]e contractjaar VITAAL")
     if st.button("Start conversie"):
 
