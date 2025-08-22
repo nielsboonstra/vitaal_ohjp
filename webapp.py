@@ -96,14 +96,14 @@ def create_heatmap_df(df : pd.DataFrame, start_week : int = 1) -> pd.DataFrame:
             heatmap_df[week] = 0
     
     #Find metadata (Frequentie aantal, Frequentie, Uitvoerende) and add it to the heatmap_df. Using the first occurrence of the metadata in the original dataframe. Add the metadata to the heatmap_df as new columns.
-    metadata = df[['Omschrijving', 'Object', 'Traject of Complex', 'Uitvoerende', 'is_complex', 'Frequentie aantal', 'Frequentie']].drop_duplicates(subset=['Omschrijving', 'Frequentie aantal'])    
+    metadata = df[['Omschrijving', 'Object', 'Complex', 'Uitvoerende', 'is_complex', 'Frequentie aantal', 'Frequentie']].drop_duplicates(subset=['Omschrijving', 'Frequentie aantal'])    
 
     heatmap_df = heatmap_df.merge(metadata, on='Omschrijving', how='left')
 
     #sort week_numbers starting with start_week to 52, then 1 to start_week-1
     week_numbers = [week for week in week_numbers[start_week-1:] + week_numbers[:start_week-1]]
     # Sort columns: metadata first, then week numbers
-    cols = ['Object', 'Omschrijving','Frequentie aantal', 'Traject of Complex', 'Uitvoerende', 'is_complex'] + week_numbers
+    cols = ['Object', 'Omschrijving','Frequentie aantal', 'Complex', 'Uitvoerende', 'is_complex'] + week_numbers
     heatmap_df = heatmap_df[cols]
 
     return heatmap_df
@@ -153,11 +153,11 @@ if 'df' in st.session_state:
             df['Weeks'] = df.apply(lambda row: list(range(row['Week'], row['Week_end'] + 1)), axis=1) # To do: Implement this in create_heatmap_df
             # If there are values >= "start_year+1"+"start_week", then print a warning and remove those values
             week_threshold = int(str(start_year + 1) + str(start_week))
-            st.write(week_threshold)
             df_to_remove = df[df["Week"] >= week_threshold]
             if not df_to_remove.empty:
                 st.warning(f"Er zijn taken gepland na week {start_week} van {start_year + 1}. Deze worden niet meegenomen in de planning.")
             df = df[df["Week"] < week_threshold] # Remove rows
+            df['Uitvoerende'] = "VITAAL"
 
             #Create Heatmap df's per object.
             complexes = df['Complex'].unique()
