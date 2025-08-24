@@ -130,8 +130,7 @@ if 'df' in st.session_state:
 
 if 'df' in st.session_state:
     st.markdown("**Start de conversie naar OHJP:**")
-    # Ask user for start year and start week for the planning
-    start_year = st.number_input("Kies het startjaar voor de planning:", min_value=2025, max_value=2100)
+    # Ask user for start week and export file name for the planning
     start_week = st.number_input("Kies de startweek voor de planning:", min_value=1, max_value=52, value=27)
     naam_export = st.text_input("Kies de naam voor het exportbestand (zonder extensie):", value="OHJP [X]e contractjaar VITAAL")
     if st.button("Start conversie"):
@@ -146,17 +145,12 @@ if 'df' in st.session_state:
             df = df[df['Object'] != -1].reset_index(drop=True) #Drop rows with -1 in the 'Object' column. These are the verkeerscentrales Tiel and Nijmegen.
             # If is_complex == False, then set "Complex" to "Vaste objecten"
             df.loc[df['is_complex'] == False, 'Complex'] = 'Vaste objecten'
+            df = df.drop(columns=["is_complex"]) # Drop the is_complex column, as it is no longer needed.
             df = df.apply(normalize_frequency, axis=1) # Transform all frequencies that are not in Months to Months
             #Turn Startdatum and Einddatum wk into integers
             df["Week"] = df["Start week"].astype(int)
             df["Week_end"] = df["Gereed week"].astype(int)
             df['Weeks'] = df.apply(lambda row: list(range(row['Week'], row['Week_end'] + 1)), axis=1) # To do: Implement this in create_heatmap_df
-            # If there are values >= "start_year+1"+"start_week", then print a warning and remove those values
-            week_threshold = int(str(start_year + 1) + str(start_week))
-            df_to_remove = df[df["Week"] >= week_threshold]
-            if not df_to_remove.empty:
-                st.warning(f"Er zijn taken gepland na week {start_week} van {start_year + 1}. Deze worden niet meegenomen in de planning.")
-            df = df[df["Week"] < week_threshold] # Remove rows
             df['Uitvoerende'] = "VITAAL"
 
             #Create Heatmap df's per object.
