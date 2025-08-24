@@ -143,8 +143,9 @@ if 'df' in st.session_state:
             df['Object'] = object_data[0]
             df['is_complex'] = object_data[1]
             df = df[df['Object'] != -1].reset_index(drop=True) #Drop rows with -1 in the 'Object' column. These are the verkeerscentrales Tiel and Nijmegen.
-            # If is_complex == False, then set "Complex" to "Vaste objecten"
+            # If is_complex == False, then set "Complex" to "Vaste objecten". Else, set "Complex" to be the same value as "Object"
             df.loc[df['is_complex'] == False, 'Complex'] = 'Vaste objecten'
+            df.loc[df['is_complex'] == True, 'Complex'] = df['Object']
             df = df.drop(columns=["is_complex"]) # Drop the is_complex column, as it is no longer needed.
             df = df.apply(normalize_frequency, axis=1) # Transform all frequencies that are not in Months to Months
             #Turn Start and Eind wk into integers
