@@ -96,14 +96,14 @@ def create_heatmap_df(df : pd.DataFrame, start_week : int = 1) -> pd.DataFrame:
             heatmap_df[week] = 0
     
     #Find metadata (Frequentie aantal, Frequentie, Uitvoerende) and add it to the heatmap_df. Using the first occurrence of the metadata in the original dataframe. Add the metadata to the heatmap_df as new columns.
-    metadata = df[['Omschrijving', 'Object', 'Complex', 'Uitvoerende', 'is_complex', 'Frequentie aantal', 'Frequentie']].drop_duplicates(subset=['Omschrijving', 'Frequentie aantal'])    
+    metadata = df[['Omschrijving', 'Object', 'Complex', 'Uitvoerende', 'Frequentie aantal', 'Frequentie']].drop_duplicates(subset=['Omschrijving', 'Frequentie aantal'])    
 
     heatmap_df = heatmap_df.merge(metadata, on='Omschrijving', how='left')
 
     #sort week_numbers starting with start_week to 52, then 1 to start_week-1
     week_numbers = [week for week in week_numbers[start_week-1:] + week_numbers[:start_week-1]]
     # Sort columns: metadata first, then week numbers
-    cols = ['Object', 'Omschrijving','Frequentie aantal', 'Complex', 'Uitvoerende', 'is_complex'] + week_numbers
+    cols = ['Object', 'Omschrijving','Frequentie aantal', 'Complex', 'Uitvoerende'] + week_numbers
     heatmap_df = heatmap_df[cols]
 
     return heatmap_df
@@ -147,7 +147,7 @@ if 'df' in st.session_state:
             df.loc[df['is_complex'] == False, 'Complex'] = 'Vaste objecten'
             df = df.drop(columns=["is_complex"]) # Drop the is_complex column, as it is no longer needed.
             df = df.apply(normalize_frequency, axis=1) # Transform all frequencies that are not in Months to Months
-            #Turn Startdatum and Einddatum wk into integers
+            #Turn Start and Eind wk into integers
             df["Week"] = df["Start week"].astype(int)
             df["Week_end"] = df["Gereed week"].astype(int)
             df['Weeks'] = df.apply(lambda row: list(range(row['Week'], row['Week_end'] + 1)), axis=1) # To do: Implement this in create_heatmap_df
