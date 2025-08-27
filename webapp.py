@@ -5,6 +5,25 @@ import regex as re
 st.set_page_config(page_title="VITAAL | Ultimo naar OHJP Conversie Tool", layout="wide")
 st.logo("https://raw.githubusercontent.com/nielsboonstra/vitaal_ohjp/0c188e531f78210f2f59043fc362bb5b6bf8087d/vitaal_logo.png")
 
+@st.dialog("Uitleg over de VITAAL Ultimo naar OHJP conversietool", width="large")
+def explanation_dialog():
+    st.markdown("### Input")
+    st.markdown("Om deze tool te kunnen gebruiken, heb je nodig:")
+    st.markdown("1. Een Excel-export vanuit Ultimo. Deze kan je uploaden in de zijbalk. Zorg ervoor dat je het goede rijnummer selecteert. Dit kan je controleren in het hoofdscherm onder de uitvouwbare sectie, na het uploaden van de export.")
+    st.markdown("Zorg ervoor dat de export de juiste structuur heeft, met in ieder geval de volgende kolommen:")
+    st.markdown("- Traject of Complex")
+    st.markdown("- Omschrijving")
+    st.markdown("- Frequentie aantal")
+    st.markdown("- Frequentie")
+    st.markdown("- Start week")
+    st.markdown("- Gereed week")
+    st.divider()
+    st.markdown("### Output")
+    st.markdown("Na het uploaden van de bestanden en het bijstellen van de juiste variabelen (Startjaar, startweek, en naam van het exportbestand), zal de tool één .xlsx-bestand genereren dat de volgende data bevat:")
+    st.markdown("- Per complex is één individueel Excel-tabblad gegenereerd met de objecten die onder dat complex vallen. De vaste objecten worden onder het tabblad _Vaste objecten_ geplaatst.")
+    st.markdown("- In elk tabblad is een heatmap-achtige structuur gecreëerd. Na de kolommen die de metadata bevatten, worden de geplande werkzaamheden weergegeven met numerieke waarden. Als er een waarde >=1 in de cel voorkomt, betekent dit dat de taak gepland is voor die specifieke week.")
+
+
 @st.cache_data
 def load_excel(file : str, header : int = 0) -> pd.DataFrame | None:
     try:
@@ -112,6 +131,9 @@ st.title("🏃 VITAAL | Ultimo naar OHJP Conversie Tool")
 
 st.write("Deze tool helpt jou met het omzetten van een OMS-export uit Ultimo naar een OHJP-worksheet" \
 " voor het opzetten van een onderhoudsjaarplan.")
+
+if st.button("Meer uitleg over deze tool", icon="ℹ️"):
+    explanation_dialog()
 
 with st.sidebar:
     st.markdown("**1. Upload een OMS-exportbestand (Excel-format) om te beginnen:** 👇")
